@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>XI TKJ 4 - Akses Guru</title>
+<style>
+*{font-family:sans-serif;box-sizing:border-box}body{margin:0;background:#0f172a;display:flex;justify-content:center}
+.app{width:100%;max-width:480px;background:#fff;min-height:100vh}
+.page{padding:18px;display:none;min-height:100vh}.active{display:block}
+.login{background:linear-gradient(180deg,#0f172a,#1e293b);color:#fff;display:flex;flex-direction:column;justify-content:center}
+input,select{width:100%;padding:14px;margin:7px 0;border-radius:12px;border:1px solid #cbd5e1}
+button{width:100%;padding:14px;border-radius:12px;border:none;font-weight:800;background:#0f172a;color:#fff}
+.card{background:#f8fafc;border-left:5px solid #0f172a;border-radius:10px;padding:12px;margin:8px 0;display:flex;justify-content:space-between;align-items:center}
+.siswa-item{background:#f1f5f9;border-radius:12px;padding:10px 12px;margin:6px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.tab{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}.tab button{flex:1;min-width:80px;background:#e2e8f0;color:#333;font-size:12px}
+.tab.on{background:#0f172a;color:#fff}
+.badge{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;background:#dcfce7;color:#15803d}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #ddd;padding:6px;text-align:left}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- LOGIN -->
+<div id="pLogin" class="page login active">
+<h2 style="margin:0;color:#38bdf8">XI TKJ 4</h2>
+<h1 style="font-size:30px;line-height:1;margin:8px 0">LOGIN NILAI KIK</h1>
+<select id="role"><option value="siswa">Login Sebagai SISWA</option><option value="guru">Login Sebagai GURU</option></select>
+<select id="user"></select>
+<input id="pass" type="password" placeholder="Password">
+<button onclick="login()" style="background:#fff;color:#0f172a;margin-top:10px">MASUK</button>
+<div style="background:#ffffff15;padding:10px;border-radius:10px;margin-top:14px;font-size:11px">
+<b>Akun Siswa:</b> Pilih nama (di foto) | Pass: 123<br>
+<b>Akun Guru:</b> Pilih GURU | User: guru | Pass: guru123
+</div>
+</div>
+
+<!-- APP -->
+<div id="pNilai" class="page">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><h3 style="margin:0">XI TKJ 4</h3><small id="roleInfo"></small></div>
+<button onclick="logout()" style="width:auto;padding:8px 12px;background:#eee;color:#333">Logout</button>
+</div>
+<h2 id="hai" style="margin:8px 0"></h2>
+
+<div style="background:#0f172a;color:#fff;padding:14px;border-radius:16px;display:flex;justify-content:space-between">
+<div><small>RATA-RATA</small><br><b id="rata" style="font-size:30px">0</b></div>
+<div style="text-align:right"><small id="jml">0 Nilai</small><br><small id="status">-</small></div>
+</div>
+
+<div class="tab">
+<button id="btnHarian" class="on" onclick="showTab('harian')">HARIAN</button>
+<button id="btnUlangan" onclick="showTab('ulangan')">ULANGAN</button>
+<button id="btnDaftar" onclick="showTab('daftar')">36 SISWA</button>
+<button id="btnRekap" onclick="showTab('rekap')" style="display:none">REKAP GURU</button>
+</div>
+
+<div id="listHarian"></div>
+<div id="listUlangan" style="display:none"></div>
+<div id="listDaftar" style="display:none"></div>
+<div id="listRekap" style="display:none"></div>
+
+<div id="formTambah">
+<hr style="border:none;border-top:1px solid #eee;margin:16px 0">
+<h3>➕ Tambah Nilai</h3>
+<select id="jenis"><option value="harian">Harian KIK</option><option value="ulangan">Ulangan / PTS / PAS</option></select>
+<select id="mapel">
+<option>Administrasi Sistem Jaringan (ASJ)</option>
+<option>Teknologi Layanan Jaringan (TLJ)</option>
+<option>Administrasi Infrastruktur Jaringan (AIJ)</option>
+<option>Teknologi Jaringan Berbasis Luas (WAN)</option>
+<option>Produk Kreatif & Kewirausahaan TKJ</option>
+</select>
+<input id="nilaiInput" type="number" placeholder="Nilai 0-100">
+<button onclick="tambah()">SIMPAN UNTUK <span id="namaSimpan"></span></button>
+<button id="btnExport" onclick="exportExcel()" style="background:#16a34a;margin-top:8px;display:none">📥 EXPORT REKAP KE EXCEL (GURU)</button>
+</div>
+</div>
+
+</div>
+<script>
+const daftarNama = ["AMELIA ULFA","ANNISATUL AFIAH","ASNATUL ANJANI","CITRA AISYAH RANI","CITRA NILAM AL FAQI","DEA ISNAENI","DESVITA AURILLIANTI","DZIHNI KHASNATU ANJANI","EKA MAULIDA AZ-ZAHRA","GAISA RIZKA AMANAH","HA'FIZATUN NITSA","IQNASIAH ZAHROTUSSIFA","ISKI AINAYAH","Jhasmin Valenfia Tasya","LELI NUROH","M. ALTOF SAIDAN","MAULANA RAFI","MEIKA AULIA HARVINNAISYA","MUHAMMAD ALAMZAH","Muhammad Cesario Izzan Azizi","MUHAMMAD SYAHID FAA'IZ","NAYLA FAOZIANA","Nia Dwi Febriani","NUR ANDINI","NUR FATIKHA SARI","NURIL MAULIDYA","NURUL HIDAYAH","PUJA SUKMA AYU","PUTRI OKTAFIANI","RATNA SARI DEWI","RIA IDNI RAHMAWATI","SELI SILVI YANTI","SYIFA 'ALAWIYAH","Syifa Putri Rahmadani","WINDI DWI PRASASTI","ZAZKIYAH DZULHIJAH"];
+let allData = JSON.parse(localStorage.getItem('nilaiTKJ4_all')||'{}');
+let currentSiswa="", isGuru=false;
+
+const roleSelect = document.getElementById('role');
+const userSelect = document.getElementById('user');
+function isiUser(){
+ userSelect.innerHTML='';
+ if(roleSelect.value=='siswa'){
+  userSelect.innerHTML='<option value="">-- Pilih Nama Siswa --</option>';
+  daftarNama.forEach(n=>{ userSelect.innerHTML+=`<option>${n}</option>` });
+ } else {
+  userSelect.innerHTML='<option value="guru">GURU TKJ 4</option>';
+ }
+}
+roleSelect.onchange=isiUser; isiUser();
+
+function login(){
+ let p=pass.value, u=user.value;
+ if(roleSelect.value=='siswa'){
+  if(!u||p!='123') return alert('Siswa: pilih nama + pass 123');
+  isGuru=false; currentSiswa=u;
+ } else {
+  if(u!='guru'||p!='guru123') return alert('Guru: user guru pass guru123');
+  isGuru=true; currentSiswa=daftarNama[0];
+ }
+ pLogin.style.display='none'; pNilai.style.display='block'; pNilai.classList.add('active');
+ roleInfo.innerText = isGuru? 'Mode: GURU - Akses 36 Siswa' : 'Mode: SISWA - No '+(daftarNama.indexOf(currentSiswa)+1);
+ hai.innerText = isGuru? 'Halo, Pak/Bu Guru 👋' : currentSiswa;
+ document.getElementById('btnRekap').style.display=isGuru?'block':'none';
+ document.getElementById('btnExport').style.display=isGuru?'block':'none';
+ if(!allData[currentSiswa]) allData[currentSiswa]={harian:[],ulangan:[]};
+ render(); renderDaftar(); if(isGuru) renderRekap();
+}
+function logout(){ localStorage.setItem('nilaiTKJ4_all',JSON.stringify(allData)); location.reload(); }
+function showTab(t){
+ listHarian.style.display=t=='harian'?'block':'none';
+ listUlangan.style.display=t=='ulangan'?'block':'none';
+ listDaftar.style.display=t=='daftar'?'block':'none';
+ listRekap.style.display=t=='rekap'?'block':'none';
+ btnHarian.className=t=='harian'?'on':''; btnUlangan.className=t=='ulangan'?'on':''; btnDaftar.className=t=='daftar'?'on':''; btnRekap.className=t=='rekap'?'on':'';
+}
+function render(){
+ let d=allData[currentSiswa]||{harian:[],ulangan:[]};
+ let h='',u='',all=[];
+ d.harian.forEach((x,i)=>{ all.push(x.nilai); h+=`<div class="card"><div><b>${x.mapel}</b><br><small>${currentSiswa}</small></div><div><b>${x.nilai}</b> ${isGuru?`<br><small onclick="hapus('harian',${i})" style="color:red;cursor:pointer">hapus</small>`:''}</div></div>`});
+ d.ulangan.forEach((x,i)=>{ all.push(x.nilai); u+=`<div class="card"><div><b>${x.mapel}</b><br><small>${currentSiswa}</small></div><div><b>${x.nilai}</b> ${isGuru?`<br><small onclick="hapus('ulangan',${i})" style="color:red;cursor:pointer">hapus</small>`:''}</div></div>`});
+ listHarian.innerHTML=h||'<p>Belum ada nilai harian</p>';
+ listUlangan.innerHTML=u||'<p>Belum ada nilai ulangan</p>';
+ let avg=all.length?Math.round(all.reduce((a,b)=>a+b)/all.length):0;
+ rata.innerText=avg; jml.innerText=all.length+' Nilai untuk '+currentSiswa.split(' ')[0]; status.innerText=avg>=75?'LULUS ✅':'REMED ⚠️';
+ namaSimpan.innerText=currentSiswa.split(' ')[0];
+ localStorage.setItem('nilaiTKJ4_all',JSON.stringify(allData));
+}
+function renderDaftar(){
+ let html='';
+ daftarNama.forEach((n,i)=>{
+  let tot=(allData[n]?allData[n].harian.length+allData[n].ulangan.length:0);
+  let avg=0; if(allData[n]){ let a=[...allData[n].harian,...allData[n].ulangan].map(x=>x.nilai); if(a.length) avg=Math.round(a.reduce((p,c)=>p+c)/a.length); }
+  html+=`<div class="siswa-item" onclick="pilihSiswa('${n}')"><div><b>${i+1}. ${n}</b><br><small>${tot} nilai | Rata: ${avg}</small></div><span>›</span></div>`;
+ });
+ listDaftar.innerHTML=html;
+}
+function renderRekap(){
+ let html='<table><tr><th>No</th><th>Nama</th><th>Jml</th><th>Rata</th></tr>';
+ daftarNama.forEach((n,i)=>{
+  let d=allData[n]||{harian:[],ulangan:[]}; let all=[...d.harian,...d.ulangan].map(x=>x.nilai);
+  let avg=all.length?Math.round(all.reduce((a,b)=>a+b)/all.length):0;
+  html+=`<tr><td>${i+1}</td><td>${n}</td><td>${all.length}</td><td><b>${avg}</b></td></tr>`;
+ });
+ html+='</table>'; listRekap.innerHTML=html;
+}
+function pilihSiswa(n){ currentSiswa=n; if(!allData[n]) allData[n]={harian:[],ulangan:[]}; hai.innerText=isGuru? n+' (Mode Guru)':n; showTab('harian'); render(); }
+function tambah(){
+ if(!isGuru && currentSiswa=='') return;
+ let j=jenis.value,m=mapel.value,nn=parseInt(nilaiInput.value);
+ if(isNaN(nn)) return alert('Isi nilai');
+ if(!allData[currentSiswa]) allData[currentSiswa]={harian:[],ulangan:[]};
+ allData[currentSiswa][j].push({mapel:m,nilai:nn}); nilaiInput.value=''; render(); renderDaftar(); if(isGuru) renderRekap(); showTab(j);
+}
+function hapus(j,i){ if(!isGuru) return alert('Hanya guru bisa hapus'); if(confirm('Hapus?')){ allData[currentSiswa][j].splice(i,1); render(); renderDaftar(); renderRekap(); } }
+function exportExcel(){
+ let csv='No,Nama,Jumlah Nilai,Rata-rata,Status\n';
+ daftarNama.forEach((n,i)=>{ let d=allData[n]||{harian:[],ulangan:[]}; let all=[...d.harian,...d.ulangan].map(x=>x.nilai); let avg=all.length?Math.round(all.reduce((a,b)=>a+b)/all.length):0; csv+=`${i+1},"${n}",${all.length},${avg},${avg>=75?'LULUS':'REMED'}\n`; });
+ let blob=new Blob([csv],{type:'text/csv'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='REKAP-NILAI-XI-TKJ-4.csv'; a.click();
+}
+</script>
+</body>
+</html>
